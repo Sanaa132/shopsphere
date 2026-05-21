@@ -3,6 +3,7 @@ package com.example.shopsphere.controller;
 import com.example.shopsphere.dto.request.OrderRequest;
 import com.example.shopsphere.dto.response.OrderResponse;
 import com.example.shopsphere.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class OrderController {
 
     // PLACE ORDER
     @PostMapping("/place")
-    public OrderResponse placeOrder(@RequestBody OrderRequest request) {
+    public OrderResponse placeOrder(@Valid @RequestBody OrderRequest request) {
 
         String email = SecurityContextHolder
                 .getContext()

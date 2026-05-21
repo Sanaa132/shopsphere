@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ShopSphere</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- NAVBAR                                     -->
+<!-- ========================================== -->
+<nav class="navbar">
+    <div class="nav-logo">
+        <h2>ShopSphere</h2>
+    </div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+    </div>
+</nav>
+
+<!-- ========================================== -->
+<!-- LOGIN FORM CARD                            -->
+<!-- ========================================== -->
+<main class="form-card" style="margin: 80px auto; max-width: 400px; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+    <h2 style="margin-bottom: 20px; color: #0f172a;">Login</h2>
+
+    <form id="loginForm">
+        <!-- INPUTS -->
+        <input type="email"
+               id="email"
+               placeholder="Enter Email"
+               required
+               style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+
+        <!-- FIX 1: Changed id from "id" to "password" to match login.js -->
+        <input type="password"
+               id="password"
+               placeholder="Enter Password"
+               required
+               style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+
+        <!-- FIX 2: Changed id from "error-msg" to "errorText" and removed display:none so text visibility is natural -->
+        <p id="errorText"
+           style="color: red; margin-bottom: 15px; font-size: 14px;">
+        </p>
+
+        <!-- BUTTON ROW (Side-by-side flexbox layout) -->
+        <div style="display: flex; gap: 12px; margin-top: 5px;">
+            <!-- LOGIN BUTTON -->
+            <button type="submit"
+                    style="flex: 1; background: #0f172a; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+                Login
+            </button>
+
+            <!-- REGISTER REDIRECT LINK -->
+            <a href="/register-page"
+               style="flex: 1; text-align: center; background: #dc2626; color: white; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold; box-sizing: border-box;">
+                Register
+            </a>
+        </div>
+
+        <!-- NEW USER NOTE -->
+        <p style="margin-top: 18px; text-align: center; color: #64748b; font-size: 14px;">
+            New user? Register to continue shopping.
+        </p>
+    </form>
+</main>
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT                                 -->
+<!-- ========================================== -->
+<script src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Admin Dashboard - ShopSphere</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h2>ShopSphere</h2>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+        <a href="/wishlist-page">Wishlist</a>
+        <a href="/orders-page">Orders</a>
+        <a href="/cart-page">Cart</a>
+
+        <a href="/admin-page"
+           style="color:#fbbf24;">
+            Analytics
+        </a>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <h1 style="margin-bottom:30px;">
+        Admin Analytics Dashboard
+    </h1>
+
+    <div class="analytics-grid">
+
+        <div class="chart-card">
+
+            <h3>Category Purchases</h3>
+
+            <canvas id="categoryChart"></canvas>
+
+        </div>
+
+        <div class="chart-card">
+
+            <h3>Top Product Views</h3>
+
+            <canvas id="viewChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/js/admin.js"></script>
+
+</body>
+
+</html>
+

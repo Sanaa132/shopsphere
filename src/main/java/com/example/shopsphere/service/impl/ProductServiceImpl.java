@@ -10,6 +10,9 @@ import com.example.shopsphere.repository.CategoryRepository;
 import com.example.shopsphere.repository.ProductRepository;
 import com.example.shopsphere.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,7 +77,12 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found")
                 );
+        // INCREASE VIEW COUNT
+        product.setViewCount(
+                product.getViewCount() + 1
+        );
 
+        productRepository.save(product);
         return mapToResponse(product);
     }
 
@@ -151,4 +159,16 @@ public class ProductServiceImpl implements ProductService {
 
         return response;
     }
+
+    @Override
+    public Page<ProductResponse> searchProducts(String query, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Product> products = productRepository
+                .findByNameContainingIgnoreCase(query, pageable);
+
+        return products.map(this::mapToResponse);
+    }
+
 }

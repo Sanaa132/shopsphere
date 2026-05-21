@@ -39,41 +39,47 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Check if token exists and starts with Bearer
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
             jwt = authHeader.substring(7);
-
             username = jwtUtil.extractUsername(jwt);
         }
 
         // Authenticate user if not already authenticated
-        if (username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    customUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
-            // Validate token
+            // Validate token structural claims
             if (jwtUtil.validateToken(jwt, userDetails)) {
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
+                                userDetails.getAuthorities() // Passes clean single ROLE_ authorities array
                         );
 
                 authToken.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
+                        new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
                 // Set authentication in Spring Security context
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                // ==========================================
+                // DEBUGGING CONSOLE HOOK: Check token state
+                // ==========================================
+                System.out.println("--- ShopSphere Security Debug ---");
+                System.out.println("Authenticated User: " + username);
+                System.out.println("Assigned Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+                System.out.println("---------------------------------");
             }
         }
 
         // Continue request
         filterChain.doFilter(request, response);
+
+        System.out.println("JWT FILTER HIT: " + request.getRequestURI());
+        System.out.println("AUTH HEADER: " + request.getHeader("Authorization"));
+
     }
 }

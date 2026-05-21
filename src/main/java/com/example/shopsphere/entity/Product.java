@@ -34,6 +34,9 @@ public class Product {
 
     private Long purchaseCount = 0L;
 
+    @Version
+    private Long version;
+
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

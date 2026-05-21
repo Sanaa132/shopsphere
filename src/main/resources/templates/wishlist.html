@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Wishlist - ShopSphere</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h2>ShopSphere</h2>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/cart-page">Cart</a>
+
+        <a href="/orders-page">Orders</a>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <h2>Your Wishlist</h2>
+
+    <div class="product-grid" id="wishlistGrid">
+
+        Loading wishlist...
+
+    </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="/js/wishlist.js"></script>
+
+</body>
+</html>

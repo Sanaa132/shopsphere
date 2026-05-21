@@ -21,53 +21,52 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    // Create signing key
     private Key getSigningKey() {
-
-        return Keys.hmacShaKeyFor(
-                secretKey.getBytes(StandardCharsets.UTF_8)
-        );
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Generate JWT token
     public String generateToken(UserDetails userDetails) {
 
+        // ALWAYS force ROLE_ format in JWT
+        String role = userDetails.getAuthorities()
+                .iterator()
+                .next()
+                .getAuthority();
+
+        if (!role.startsWith("ROLE_")) {
+            role = "ROLE_" + role;
+        }
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername()) // email
+                .setSubject(userDetails.getUsername())
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(
-                        new Date(System.currentTimeMillis() + jwtExpiration)
-                )
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Extract username/email from token
     public String extractUsername(String token) {
-
         return extractAllClaims(token).getSubject();
     }
 
-    // Validate token
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
     public boolean validateToken(String token, UserDetails userDetails) {
 
-        final String username = extractUsername(token);
+        String username = extractUsername(token);
 
         return username.equals(userDetails.getUsername())
                 && !isTokenExpired(token);
     }
 
-    // Check token expiration
     private boolean isTokenExpired(String token) {
-
-        return extractAllClaims(token)
-                .getExpiration()
-                .before(new Date());
+        return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    // Extract all claims from token
     private Claims extractAllClaims(String token) {
-
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

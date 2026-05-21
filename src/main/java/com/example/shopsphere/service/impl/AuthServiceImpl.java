@@ -5,6 +5,7 @@ import com.example.shopsphere.dto.request.RegisterRequest;
 import com.example.shopsphere.dto.response.AuthResponse;
 import com.example.shopsphere.entity.Role;
 import com.example.shopsphere.entity.User;
+import com.example.shopsphere.exception.BadRequestException;
 import com.example.shopsphere.exception.DuplicateResourceException;
 import com.example.shopsphere.exception.ResourceNotFoundException;
 import com.example.shopsphere.repository.UserRepository;
@@ -35,15 +36,18 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    // =========================
+    // REGISTER
+    // =========================
     @Override
     public AuthResponse register(RegisterRequest request) {
 
-        // CHECK DUPLICATE USER
+        // Check duplicate email
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Email already exists");
         }
 
-        // CREATE USER
+        // Create user
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -53,16 +57,15 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(user);
 
-        // BUILD USER DETAILS FOR JWT
+        // Build UserDetails (FIXED: Prefix concatenation string removed to avoid dual mapping errors)
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 savedUser.getEmail(),
                 savedUser.getPassword(),
                 Collections.singleton(
-                        new SimpleGrantedAuthority("ROLE_" + savedUser.getRole().name())
+                        new SimpleGrantedAuthority(savedUser.getRole().name())
                 )
         );
 
-        // GENERATE TOKEN
         String token = jwtUtil.generateToken(userDetails);
 
         return new AuthResponse(
@@ -72,10 +75,24 @@ public class AuthServiceImpl implements AuthService {
         );
     }
 
+    // ==========================================
+    // LOGIN (UPDATED AUTHORITY DIALECT ENGINE)
+    // ==========================================
     @Override
     public AuthResponse login(LoginRequest request) {
 
-        // AUTHENTICATE USER
+        // STEP 1: Check if user exists
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("No account found with this email")
+                );
+
+        // STEP 2: Validate password manually
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadRequestException("Incorrect password");
+        }
+
+        // STEP 3: Authenticate Spring Security context
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -83,22 +100,16 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        // FETCH USER
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found")
-                );
-
-        // BUILD USER DETAILS FOR JWT
+        // STEP 4: Build UserDetails for JWT (FIXED: Prefix concatenation string removed)
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
                 Collections.singleton(
-                        new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+                        new SimpleGrantedAuthority(user.getRole().name())
                 )
         );
 
-        // GENERATE TOKEN
+        // STEP 5: Generate JWT
         String token = jwtUtil.generateToken(userDetails);
 
         return new AuthResponse(
