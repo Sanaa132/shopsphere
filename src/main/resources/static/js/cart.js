@@ -1,5 +1,9 @@
 const token = localStorage.getItem("token");
 
+if (!token) {
+    window.location.href = "/login-page"; // Redirects to your login route if token is missing
+}
+
 function showToast(message) {
     const toast = document.getElementById("toast");
     if (toast) {

@@ -9,6 +9,7 @@ function getRoleFromToken(token) {
         const payload = token.split(".")[1];
         return JSON.parse(atob(payload)).role || null;
     } catch (e) {
+        console.error("JWT Decode Error:", e);
         return null;
     }
 }
@@ -38,15 +39,24 @@ function showToast(message, type = "success") {
 // INITIAL SETUP
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
-    // =====================
-    // LOGIN / LOGOUT LOGIC
-    // =====================
+    // ==========================================
+    // DYNAMIC NAVBAR & ROLE CONTROL
+    // ==========================================
     const authLink = document.getElementById("authLink");
+    const analyticsNav = document.getElementById("analyticsNav");
+    const role = getRoleFromToken(token);
 
+    // 1. Check if logged-in user is an Admin -> Show link
+    if (role === "ROLE_ADMIN" && analyticsNav) {
+        analyticsNav.style.display = "inline-block"; // or "block" depending on your CSS flexbox rules
+    }
+
+    // 2. Manage Login/Logout state toggle text
     if (token && authLink) {
         authLink.textContent = "Logout";
         authLink.href = "#";
-        authLink.onclick = () => {
+        authLink.onclick = (e) => {
+            e.preventDefault();
             localStorage.removeItem("token");
             window.location.reload();
         };
@@ -73,7 +83,6 @@ async function loadProducts() {
         const products = await response.json();
         const grid = document.getElementById("productGrid");
 
-        // IMPORTANT SAFETY CHECK
         if (!grid) {
             console.error("productGrid element not found");
             return;
@@ -85,9 +94,6 @@ async function loadProducts() {
             const card = document.createElement("div");
             card.className = "product-card";
 
-            // =====================
-            // PRICE LOGIC
-            // =====================
             const finalPrice = product.discountedPrice && product.discountedPrice < product.price
                 ? product.discountedPrice
                 : product.price;
@@ -96,9 +102,6 @@ async function loadProducts() {
                 ? `<p style="text-decoration:line-through; color:#94a3b8;">₹${product.price}</p>`
                 : "";
 
-            // =====================
-            // STOCK LOGIC
-            // =====================
             const stockText = product.stockQuantity > 0
                 ? `<p style="color:green; font-weight:500;">In Stock (${product.stockQuantity})</p>`
                 : `<p style="color:red; font-weight:500;">Out of Stock</p>`;

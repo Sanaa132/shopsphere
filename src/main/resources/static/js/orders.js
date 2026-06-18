@@ -66,11 +66,11 @@ async function loadOrders() {
 
                 <div class="order-content">
 
-                    <img
-                        src="https://via.placeholder.com/130"
-                        class="order-image"
-                        alt="product"
-                    >
+                   <img
+                       src="${item.imageUrl ? item.imageUrl : 'https://via.placeholder.com/130'}"
+                       class="order-image"
+                       alt="product"
+                   />
 
                     <div class="order-details">
 
@@ -97,7 +97,7 @@ async function loadOrders() {
                 <div class="order-top">
 
                     <div class="order-id">
-                        Order #${order.orderId}
+                       Order ID: ${order.orderNumber}
                     </div>
 
                     <div class="order-status">

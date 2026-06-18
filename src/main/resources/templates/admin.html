@@ -1,70 +1,72 @@
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
-    <title>Admin Dashboard - ShopSphere</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopSphere Analytics</title>
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-</head>
+    <script>
+        const token = localStorage.getItem("token");
 
+        function getRoleFromToken(t) {
+            if (!t) return null;
+            try {
+                const payload = t.split(".")[1];
+                const decoded = JSON.parse(atob(payload));
+                return decoded.role || null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        const role = getRoleFromToken(token);
+
+        if (!token || role !== "ROLE_ADMIN") {
+            window.location.href = "/";
+        }
+    </script>
+</head>
 <body>
 
-<div class="navbar">
-
-    <h2>ShopSphere</h2>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-        <a href="/wishlist-page">Wishlist</a>
-        <a href="/orders-page">Orders</a>
-        <a href="/cart-page">Cart</a>
-
-        <a href="/admin-page"
-           style="color:#fbbf24;">
-            Analytics
-        </a>
-
+<nav class="admin-navbar">
+    <div class="admin-logo">
+        ShopSphere
     </div>
+    <div class="admin-nav-links">
+        <a href="/">Home</a>
+        <a href="#" id="logoutBtn">Logout</a>
+    </div>
+</nav>
 
-</div>
-
-<div class="container">
-
-    <h1 style="margin-bottom:30px;">
-        Admin Analytics Dashboard
-    </h1>
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>Analytics Overview</h1>
+        <p>Real-time product insights and category purchase analytics.</p>
+    </div>
 
     <div class="analytics-grid">
-
-        <div class="chart-card">
-
-            <h3>Category Purchases</h3>
-
-            <canvas id="categoryChart"></canvas>
-
+        <div class="analytics-card">
+            <h2>Most Viewed Products</h2>
+            <div class="chart-wrapper">
+                <canvas id="viewChart"></canvas>
+            </div>
         </div>
 
-        <div class="chart-card">
-
-            <h3>Top Product Views</h3>
-
-            <canvas id="viewChart"></canvas>
-
+        <div class="analytics-card">
+            <h2>Purchases by Category</h2>
+            <div class="chart-wrapper">
+                <canvas id="categoryChart"></canvas>
+            </div>
         </div>
-
     </div>
-
 </div>
 
-<script src="/js/admin.js"></script>
-
+<script th:src="@{/js/admin.js}"></script>
 </body>
-
 </html>
-

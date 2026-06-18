@@ -77,46 +77,52 @@ async function loadWishlist() {
     }
 
     // LOAD PRODUCTS
-    products.forEach(product => {
+   products.forEach(product => {
 
-        grid.innerHTML += `
+       grid.innerHTML += `
 
-            <div class="product-card">
+           <div class="product-card">
 
-                <h3>${product.name}</h3>
+               <img
+                   src="${product.imageUrl || 'https://placehold.co/250x200?text=No+Image'}"
+                   alt="${product.name}"
+                   class="product-image"
+               >
 
-                <p>${product.description || ""}</p>
+               <h3>${product.name}</h3>
 
-                <p class="price">
-                    ₹${product.discountedPrice || product.price}
-                </p>
+               <p>${product.description || ""}</p>
 
-                <p style="
-                    text-decoration: line-through;
-                    color: #94a3b8;
-                ">
-                    ₹${product.price}
-                </p>
+               <p class="price">
+                   ₹${product.discountedPrice || product.price}
+               </p>
 
-                <button
-                    onclick="addToCart(${product.id}, '${product.name}')"
-                >
-                    Add to Cart
-                </button>
+               <p style="
+                   text-decoration: line-through;
+                   color: #94a3b8;
+               ">
+                   ₹${product.price}
+               </p>
 
-                <button
-                    onclick="removeFromWishlist(${product.id})"
-                    style="
-                        background:#dc2626;
-                        margin-top:8px;
-                    "
-                >
-                    Remove
-                </button>
+               <button
+                   onclick="addToCart(${product.id}, '${product.name}')"
+               >
+                   Add to Cart
+               </button>
 
-            </div>
-        `;
-    });
+               <button
+                   onclick="removeFromWishlist(${product.id})"
+                   style="
+                       background:#dc2626;
+                       margin-top:8px;
+                   "
+               >
+                   Remove
+               </button>
+
+           </div>
+       `;
+   });
 }
 
 // ADD TO CART

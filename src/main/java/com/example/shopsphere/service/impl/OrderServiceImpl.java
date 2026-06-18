@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -26,6 +27,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired private CartItemRepository cartItemRepository;
     @Autowired private ProductRepository productRepository;
     @Autowired private OrderRepository orderRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     @Transactional
     @Override
@@ -96,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.PLACED);
         order.setTotalAmount(totalAmount);
         order.setOrderItems(orderItems);
+        order.setOrderNumber("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         // link back order -> orderItems
         for (OrderItem item : orderItems) {
@@ -104,7 +108,14 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEntity savedOrder = orderRepository.save(order);
 
+       // FORCE SAVE ORDER ITEMS
+        for (OrderItem item : orderItems) {
+            item.setOrder(savedOrder);
+            orderItemRepository.save(item);
+        }
+
         return mapToResponse(savedOrder);
+
     }
 
     @Override
@@ -113,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<OrderEntity> orders = orderRepository.findByUser(user);
+        List<OrderEntity> orders = orderRepository.findByUserOrderByOrderDateDesc(user);
 
         List<OrderResponse> responseList = new ArrayList<>();
 
@@ -134,6 +145,8 @@ public class OrderServiceImpl implements OrderService {
         response.setOrderDate(order.getOrderDate());
         response.setStatus(order.getStatus());
         response.setTotalAmount(order.getTotalAmount());
+        response.setOrderNumber(order.getOrderNumber());
+
 
         List<OrderItemResponse> items = new ArrayList<>();
 
@@ -144,6 +157,7 @@ public class OrderServiceImpl implements OrderService {
             r.setProductName(item.getProduct().getName());
             r.setQuantity(item.getQuantity());
             r.setPrice(item.getPrice());
+            r.setImageUrl(item.getProduct().getImageUrl());
 
             BigDecimal subtotal = item.getPrice()
                     .multiply(BigDecimal.valueOf(item.getQuantity()));

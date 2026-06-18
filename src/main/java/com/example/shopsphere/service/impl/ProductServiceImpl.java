@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
                         new ResourceNotFoundException("Category not found")
                 );
 
-        // VALIDATION (correct exception type)
+        // VALIDATION
         if (request.getDiscountedPrice() != null &&
                 request.getDiscountedPrice().compareTo(request.getPrice()) > 0) {
 
@@ -54,35 +55,38 @@ public class ProductServiceImpl implements ProductService {
         product.setImageUrl(request.getImageUrl());
         product.setCategory(category);
 
+        // Ensure starting numbers are initialized as 0 rather than null on creation
+        product.setViewCount(0L);
+        product.setPurchaseCount(0L);
+
         Product savedProduct = productRepository.save(product);
 
         return mapToResponse(savedProduct);
     }
 
-    // GET ALL PRODUCTS
+    // GET ALL PRODUCTS (N+1 PROBLEM FIXED)
     @Override
     public List<ProductResponse> getAllProducts() {
 
-        return productRepository.findAll()
+        return productRepository.findAllWithCategory() // <-- Swapped to your custom JOIN FETCH query
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
-    // GET PRODUCT BY ID
+    // GET PRODUCT BY ID (CONCURRENCY FIXED)
     @Override
+    @Transactional
     public ProductResponse getProductById(Long id) {
+        // 1. Atomic DB increment first - avoids dirty reads and race conditions
+        productRepository.incrementViewCount(id);
 
+        // 2. Fetch the newly updated record state to display accurately to user
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found")
                 );
-        // INCREASE VIEW COUNT
-        product.setViewCount(
-                product.getViewCount() + 1
-        );
 
-        productRepository.save(product);
         return mapToResponse(product);
     }
 
@@ -100,7 +104,6 @@ public class ProductServiceImpl implements ProductService {
                         new ResourceNotFoundException("Category not found")
                 );
 
-        // VALIDATION FIXED
         if (request.getDiscountedPrice() != null &&
                 request.getDiscountedPrice().compareTo(request.getPrice()) > 0) {
 
@@ -125,7 +128,6 @@ public class ProductServiceImpl implements ProductService {
     // DELETE PRODUCT
     @Override
     public void deleteProduct(Long id) {
-
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Product not found")
@@ -136,7 +138,6 @@ public class ProductServiceImpl implements ProductService {
 
     // MAPPER
     private ProductResponse mapToResponse(Product product) {
-
         ProductResponse response = new ProductResponse();
 
         response.setId(product.getId());
@@ -148,8 +149,10 @@ public class ProductServiceImpl implements ProductService {
         response.setImageUrl(product.getImageUrl());
 
         response.setRating(product.getRating());
-        response.setViewCount(product.getViewCount());
-        response.setPurchaseCount(product.getPurchaseCount());
+
+        // Null-safe fallbacks for mapper mapping
+        response.setViewCount(product.getViewCount() != null ? product.getViewCount() : 0L);
+        response.setPurchaseCount(product.getPurchaseCount() != null ? product.getPurchaseCount() : 0L);
 
         response.setCategoryName(
                 product.getCategory() != null
@@ -162,13 +165,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> searchProducts(String query, int page, int size) {
-
         Pageable pageable = PageRequest.of(page, size);
-
         Page<Product> products = productRepository
                 .findByNameContainingIgnoreCase(query, pageable);
 
         return products.map(this::mapToResponse);
     }
-
 }

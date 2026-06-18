@@ -11,7 +11,10 @@ import com.example.shopsphere.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AnalyticsServiceImpl implements AnalyticsService {
@@ -29,41 +32,22 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         // CATEGORY PURCHASE DATA
         // =========================
 
-        List<OrderItem> orderItems =
-                orderItemRepository.findAll();
+        List<Object[]> categoryResults =
+                orderItemRepository.findCategoryPurchaseTotals();
 
-        Map<String, Long> categoryMap =
-                new HashMap<>();
+        List<CategoryPurchaseResponse> categoryPurchaseData =
+                new ArrayList<>();
 
-        for (OrderItem item : orderItems) {
+        for (Object[] row : categoryResults) {
 
-            Product product = item.getProduct();
+            String categoryName = (String) row[0];
 
-            if (product == null ||
-                    product.getCategory() == null) {
-                continue;
-            }
-
-            String category =
-                    product.getCategory().getName();
-
-            categoryMap.put(
-                    category,
-                    categoryMap.getOrDefault(category, 0L)
-                            + item.getQuantity()
-            );
-        }
-
-        List<CategoryPurchaseResponse>
-                categoryPurchaseData = new ArrayList<>();
-
-        for (Map.Entry<String, Long> entry
-                : categoryMap.entrySet()) {
+            Long totalPurchases = ((Number) row[1]).longValue();
 
             categoryPurchaseData.add(
                     new CategoryPurchaseResponse(
-                            entry.getKey(),
-                            entry.getValue()
+                            categoryName,
+                            totalPurchases
                     )
             );
         }

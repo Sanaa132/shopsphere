@@ -104,7 +104,7 @@ public class DataInitializer implements CommandLineRunner {
         iphone.setDescription("Latest Apple smartphone");
         iphone.setPrice(new BigDecimal("85000"));
         iphone.setDiscountedPrice(new BigDecimal("79999"));
-        iphone.setStockQuantity(25);
+        iphone.setStockQuantity(255);
         iphone.setRating(4.8);
         iphone.setViewCount(120L);
         iphone.setPurchaseCount(40L);
@@ -116,7 +116,7 @@ public class DataInitializer implements CommandLineRunner {
         samsung.setDescription("Flagship Samsung phone");
         samsung.setPrice(new BigDecimal("78000"));
         samsung.setDiscountedPrice(new BigDecimal("72000"));
-        samsung.setStockQuantity(40);
+        samsung.setStockQuantity(70);
         samsung.setRating(4.7);
         samsung.setViewCount(110L);
         samsung.setPurchaseCount(35L);
@@ -128,7 +128,7 @@ public class DataInitializer implements CommandLineRunner {
         sony.setDescription("Noise cancelling headphones");
         sony.setPrice(new BigDecimal("15000"));
         sony.setDiscountedPrice(new BigDecimal("12000"));
-        sony.setStockQuantity(18);
+        sony.setStockQuantity(89);
         sony.setRating(4.5);
         sony.setViewCount(95L);
         sony.setPurchaseCount(22L);
@@ -140,7 +140,7 @@ public class DataInitializer implements CommandLineRunner {
         nike.setDescription("Comfort sports shoes");
         nike.setPrice(new BigDecimal("7000"));
         nike.setDiscountedPrice(new BigDecimal("5999"));
-        nike.setStockQuantity(45);
+        nike.setStockQuantity(55);
         nike.setRating(4.4);
         nike.setViewCount(80L);
         nike.setPurchaseCount(15L);
@@ -152,7 +152,7 @@ public class DataInitializer implements CommandLineRunner {
         hoodie.setDescription("Premium cotton hoodie");
         hoodie.setPrice(new BigDecimal("4500"));
         hoodie.setDiscountedPrice(new BigDecimal("3999"));
-        hoodie.setStockQuantity(60);
+        hoodie.setStockQuantity(70);
         hoodie.setRating(4.2);
         hoodie.setViewCount(50L);
         hoodie.setPurchaseCount(10L);
@@ -164,7 +164,7 @@ public class DataInitializer implements CommandLineRunner {
         washingMachine.setDescription("Front load washing machine");
         washingMachine.setPrice(new BigDecimal("45000"));
         washingMachine.setDiscountedPrice(new BigDecimal("42000"));
-        washingMachine.setStockQuantity(12);
+        washingMachine.setStockQuantity(77);
         washingMachine.setRating(4.6);
         washingMachine.setViewCount(40L);
         washingMachine.setPurchaseCount(8L);
@@ -188,7 +188,7 @@ public class DataInitializer implements CommandLineRunner {
         football.setDescription("Professional football");
         football.setPrice(new BigDecimal("1200"));
         football.setDiscountedPrice(new BigDecimal("999"));
-        football.setStockQuantity(35);
+        football.setStockQuantity(95);
         football.setRating(4.3);
         football.setViewCount(45L);
         football.setPurchaseCount(11L);
@@ -200,7 +200,7 @@ public class DataInitializer implements CommandLineRunner {
         laptop.setDescription("Gaming laptop");
         laptop.setPrice(new BigDecimal("95000"));
         laptop.setDiscountedPrice(new BigDecimal("89999"));
-        laptop.setStockQuantity(15);
+        laptop.setStockQuantity(85);
         laptop.setRating(4.7);
         laptop.setViewCount(140L);
         laptop.setPurchaseCount(38L);
@@ -234,6 +234,6 @@ public class DataInitializer implements CommandLineRunner {
                 )
         );
 
-        System.out.println("✅ Sample products inserted successfully!");
+        System.out.println("Sample products inserted successfully!");
     }
 }

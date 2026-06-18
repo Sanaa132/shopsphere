@@ -2,12 +2,32 @@ const form = document.getElementById("loginForm");
 const errorText = document.getElementById("errorText");
 
 // =====================
+// TOAST ALERT DISPATCHER
+// =====================
+function showToast(message, isError = false) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+
+    // Reset layout classes dynamically
+    toast.className = "toast";
+    if (isError) {
+        toast.classList.add("error");
+    }
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+// =====================
 // FORM SUBMISSION EVENT
 // =====================
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Clear any previous error messages
     if (errorText) {
         errorText.innerText = "";
     }
@@ -33,27 +53,35 @@ form.addEventListener("submit", async (e) => {
         // LOGIN SUCCESS
         // =====================
         if (response.ok) {
-            console.log(data);
+            console.log("Login authorized:", data);
 
-            // SAVE TOKEN
+            // SAVE STATE VARIABLES
             localStorage.setItem("token", data.token);
 
-            // REDIRECT HOME
-            window.location.href = "/";
+            // Display toast feedback layout layer
+            showToast("Login successful!");
+
+            // Enforce a deliberate timeout gap to allow the message to be read
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1000);
             return;
         }
 
         // =====================
         // LOGIN FAILED
         // =====================
+        const failureReason = data.message || data.error || "Login failed";
         if (errorText) {
-            errorText.innerText = data.message || data.error || "Login failed";
+            errorText.innerText = failureReason;
         }
+        showToast(failureReason, true);
 
     } catch (error) {
-        console.error(error);
+        console.error("Authentication submission loop crash:", error);
         if (errorText) {
             errorText.innerText = "Something went wrong";
         }
+        showToast("Something went wrong", true);
     }
 });

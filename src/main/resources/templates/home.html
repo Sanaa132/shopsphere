@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShopSphere - Home</title>
-    <!-- Thymeleaf standard syntax to link the static stylesheet -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<!-- ========================================== -->
-<!-- NAVBAR (Dark Navy Background #0f172a)      -->
-<!-- ========================================== -->
 <nav class="navbar">
     <div class="nav-logo">
         <h2>ShopSphere</h2>
@@ -21,31 +17,25 @@
         <a href="/cart-page">Cart</a>
         <a href="/wishlist-page">Wishlist</a>
         <a href="/orders-page">Orders</a>
-        <!-- Dynamic link managed by home.js based on JWT presence -->
+
+        <a href="/admin-page" id="analyticsNav" style="display: none;">Analytics</a>
+
         <a href="/login-page" id="authLink">Login</a>
     </div>
 </nav>
 
-<!-- ========================================== -->
-<!-- MAIN CONTAINER                             -->
-<!-- ========================================== -->
 <main class="container">
     <header class="page-header">
         <h2>Our Products</h2>
     </header>
 
-    <!-- Toast Notifications Container (For success/error popups) -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <!-- PRODUCT GRID (Populated dynamically via home.js) -->
     <div class="product-grid" id="productGrid">
         <div class="loading-state">Loading products...</div>
     </div>
 </main>
 
-<!-- ========================================== -->
-<!-- JAVASCRIPT                                 -->
-<!-- ========================================== -->
 <script src="/js/home.js"></script>
 </body>
 </html>

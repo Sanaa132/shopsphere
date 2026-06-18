@@ -30,6 +30,7 @@ public class Product {
 
     private Double rating = 0.0;
 
+
     private Long viewCount = 0L;
 
     private Long purchaseCount = 0L;

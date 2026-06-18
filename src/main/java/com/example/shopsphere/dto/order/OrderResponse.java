@@ -16,6 +16,8 @@ public class OrderResponse {
     private LocalDateTime orderDate;
     private OrderStatus status;
     private BigDecimal totalAmount;
+    private String imageUrl;
+    private String orderNumber;
 
     private List<com.example.shopsphere.dto.response.OrderItemResponse> items;
 }

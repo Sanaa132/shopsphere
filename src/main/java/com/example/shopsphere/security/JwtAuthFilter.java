@@ -65,21 +65,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // Set authentication in Spring Security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                // ==========================================
-                // DEBUGGING CONSOLE HOOK: Check token state
-                // ==========================================
-                System.out.println("--- ShopSphere Security Debug ---");
-                System.out.println("Authenticated User: " + username);
-                System.out.println("Assigned Authorities: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-                System.out.println("---------------------------------");
+
             }
         }
 
         // Continue request
         filterChain.doFilter(request, response);
 
-        System.out.println("JWT FILTER HIT: " + request.getRequestURI());
-        System.out.println("AUTH HEADER: " + request.getHeader("Authorization"));
+
 
     }
 }

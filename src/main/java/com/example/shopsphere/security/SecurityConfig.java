@@ -37,38 +37,41 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
                 .authorizeHttpRequests(auth -> auth
-
+                        // 1. PUBLIC ASSETS & HTML VIEWS (Permit All)
+                        // Allows the page layout to load so your JS can handle smooth local redirects
                         .requestMatchers(
                                 "/",
                                 "/login-page",
                                 "/register-page",
+                                "/admin-page",
+                                "/cart-page",     // Moved here to prevent raw browser 403s
+                                "/wishlist-page", // Moved here to prevent raw browser 403s
+                                "/orders-page",   // Moved here to prevent raw browser 403s
+                                "/product/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
+                                "/favicon.ico",
                                 "/auth/**"
                         ).permitAll()
 
+                        // 2. PUBLIC API ENDPOINTS
                         .requestMatchers("/api/products/**").permitAll()
 
-                        .requestMatchers("/cart-page",
-                                "/wishlist-page",
-                                "/orders-page",
-                                "/product/**"
-                        ).authenticated()
-
+                        // 3. SECURED USER API ROUTES (Requires JWT Authentication)
                         .requestMatchers("/api/cart/**").authenticated()
                         .requestMatchers("/api/wishlist/**").authenticated()
                         .requestMatchers("/api/orders/**").authenticated()
 
-                        // ADMIN ONLY
+                        // 4. SECURED ADMIN API ROUTES (Requires JWT Authentication + ADMIN Role)
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/admin-page").hasRole("ADMIN")
 
+                        // 5. CATCH-ALL SAFETY NET
                         .anyRequest().authenticated()
                 );
 
+        // Inject your JWT filter to process tokens on incoming requests
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

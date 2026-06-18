@@ -1,0 +1,110 @@
+/* ========================================= */
+/* ADMIN PAGE ONLY                           */
+/* ========================================= */
+
+body {
+    background: #f1f5f9;
+}
+
+/* NAVBAR */
+.admin-navbar {
+    height: 72px;
+    background: #0f172a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-logo {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.admin-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.admin-nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.admin-nav-links a:hover {
+    color: #f97316;
+}
+
+/* MAIN SECTION */
+.analytics-container {
+    padding: 40px 50px;
+}
+
+/* HEADER */
+.analytics-header {
+    margin-bottom: 35px;
+}
+
+.analytics-header h1 {
+    font-size: 42px;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.analytics-header p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+/* GRID */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* CARD */
+.analytics-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.analytics-card h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #0f172a;
+}
+
+/* CHART CONTAINER */
+.chart-wrapper {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+/* RESPONSIVE */
+@media(max-width: 900px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-container {
+        padding: 30px 20px;
+    }
+
+    .admin-navbar {
+        padding: 0 20px;
+    }
+
+    .analytics-header h1 {
+        font-size: 34px;
+    }
+}
