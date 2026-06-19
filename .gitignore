@@ -32,6 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 # Spring Boot secrets
-application.properties
+
 application.yml
 .env
