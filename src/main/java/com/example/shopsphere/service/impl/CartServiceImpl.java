@@ -14,6 +14,7 @@ import com.example.shopsphere.repository.UserRepository;
 import com.example.shopsphere.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class CartServiceImpl implements CartService {
     private ProductRepository productRepository;
 
     // GET CART
+    @Transactional
     @Override
     public CartResponse getCartByUser(String email) {
 
@@ -50,11 +52,12 @@ public class CartServiceImpl implements CartService {
                     newCart.setCartItems(new ArrayList<>());
                     return cartRepository.save(newCart);
                 });
-
+        cart.getCartItems().size();
         return mapToCartResponse(cart);
     }
 
     // ADD TO CART
+    @Transactional
     @Override
     public CartResponse addToCart(String email, Long productId, int quantity) {
 
@@ -79,6 +82,8 @@ public class CartServiceImpl implements CartService {
                     newCart.setCartItems(new ArrayList<>());
                     return cartRepository.save(newCart);
                 });
+
+        cart.getCartItems().size();
 
         // CHECK IF PRODUCT ALREADY EXISTS
         CartItem existingItem = null;
@@ -107,6 +112,7 @@ public class CartServiceImpl implements CartService {
     }
 
     // UPDATE QUANTITY
+    @Transactional
     @Override
     public CartResponse updateQuantity(String email, Long cartItemId, int quantity) {
 
@@ -136,6 +142,7 @@ public class CartServiceImpl implements CartService {
     }
 
     // REMOVE ITEM
+    @Transactional
     @Override
     public void removeFromCart(String email, Long cartItemId) {
 

@@ -118,6 +118,7 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Transactional
     @Override
     public List<OrderResponse> getOrderHistory(String email) {
 

@@ -7,6 +7,7 @@ import com.example.shopsphere.repository.*;
 import com.example.shopsphere.service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class WishlistServiceImpl implements WishlistService {
     @Autowired private UserRepository userRepository;
     @Autowired private ProductRepository productRepository;
 
+    @Transactional
     @Override
     public void addToWishlist(String email, Long productId) {
 
@@ -41,6 +43,7 @@ public class WishlistServiceImpl implements WishlistService {
         wishlistRepository.save(wishlist);
     }
 
+    @Transactional
     @Override
     public void removeFromWishlist(String email, Long productId) {
 
@@ -56,6 +59,7 @@ public class WishlistServiceImpl implements WishlistService {
         wishlistRepository.delete(wishlist);
     }
 
+    @Transactional
     @Override
     public List<ProductResponse> getWishlist(String email) {
 
