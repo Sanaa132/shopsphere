@@ -73,8 +73,7 @@ async function loadCart() {
         const subtotal = item.price * item.quantity;
 
         container.innerHTML += `
-            <div class="cart-item">
-                <!-- DYNAMIC RENDERING FIX: Read item.imageUrl directly from backend -->
+            <div class="cart-item" id="cart-item-${item.cartItemId}">
                 <img
                     src="${item.imageUrl || '/images/placeholder.jpg'}"
                     alt="${item.productName || 'product'}"
@@ -88,7 +87,7 @@ async function loadCart() {
                         ₹${item.price}
                     </p>
 
-                    <p>
+                    <p class="item-subtotal">
                         Subtotal: ₹${subtotal}
                     </p>
 
@@ -100,7 +99,7 @@ async function loadCart() {
                             -
                         </button>
 
-                        <span class="quantity-number">
+                        <span class="quantity-number item-quantity">
                             ${item.quantity}
                         </span>
 
@@ -140,9 +139,11 @@ async function decreaseQuantity(cartItemId) {
     await updateQuantity(cartItemId, -1);
 }
 
-// UPDATE QUANTITY
+// STEP 4: REPLACED ENTIRE updateQuantity FUNCTION WITH SMOOTH DOM UPDATES
 async function updateQuantity(cartItemId, change) {
+
     const item = cartItems.find(i => i.cartItemId === cartItemId);
+
     if (!item) return;
 
     const newQuantity = item.quantity + change;
@@ -153,18 +154,58 @@ async function updateQuantity(cartItemId, change) {
         return;
     }
 
-    const response = await fetch(`/api/cart/update/${cartItemId}?quantity=${newQuantity}`, {
-        method: "PUT",
-        headers: {
-            "Authorization": `Bearer ${token}`
+    const response = await fetch(
+        `/api/cart/update/${cartItemId}?quantity=${newQuantity}`,
+        {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         }
-    });
+    );
 
     if (response.ok) {
-        loadCart();
+
+        // UPDATE LOCAL MEMORY
+        item.quantity = newQuantity;
+
+        // FIND CURRENT CARD
+        const card = document.getElementById(`cart-item-${cartItemId}`);
+
+        if (!card) return;
+
+        // UPDATE QUANTITY
+        card.querySelector(".item-quantity").textContent =
+            newQuantity;
+
+        // UPDATE SUBTOTAL
+        const subtotal = item.price * newQuantity;
+
+        card.querySelector(".item-subtotal").textContent =
+            `Subtotal: ₹${subtotal}`;
+
+        // UPDATE TOTAL
+        const total = cartItems.reduce(
+            (sum, i) => sum + (i.price * i.quantity),
+            0
+        );
+
+        const totalDiv = document.getElementById("cartTotal");
+
+        if (totalDiv) {
+            totalDiv.innerHTML =
+                `<h3>Total: ₹${total.toFixed(2)}</h3>`;
+        }
+
     } else {
+
         const data = await response.json();
-        showErrorToast(data.message || data.error || "Failed to update quantity");
+
+        showErrorToast(
+            data.message ||
+            data.error ||
+            "Failed to update quantity"
+        );
     }
 }
 
